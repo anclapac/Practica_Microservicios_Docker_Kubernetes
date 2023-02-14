@@ -1,0 +1,54 @@
+version: '3'
+services:
+  productpage:
+    build:
+      context: ./Dockerfiles/ProductPage/
+      dockerfile: Dockerfile.productpage
+    image: g40/productpage
+    container_name: g40-productpage
+    volumes:
+      - ./productpage:/app
+    ports:
+      - 9080:9080
+  details:
+    build:
+      context: ./Dockerfiles/Details/
+      dockerfile: Dockerfile.details
+    image: g40/details
+    container_name: g40-details
+    volumes:
+      - ./details:/app
+    environment:
+      - SERVICE_VERSION=v1
+      - ENABLE_EXTERNAL_BOOK_SERVICE=true
+    ports:
+      - 9081:9080
+  ratings:
+    build:
+      context: ./Dockerfiles/Ratings/
+      dockerfile: Dockerfile.ratings
+    image: g40/ratings
+    container_name: g40-ratings
+    volumes:
+      - ./ratings:/app
+    ports:
+      - 9083:9080
+  reviews:
+    build:
+      context: ./Dockerfiles/Reviews/reviews-wlpcfg
+      dockerfile: Dockerfile
+    image: g40/reviews:v3
+    container_name: g40-reviews
+    volumes:
+      - ./reviews:/app
+    environment:
+      - SERVICE_VERSION=v3
+      - ENABLE_RATINGS=true
+      - STAR_COLOR=red
+    ports:
+      - 9082:9080
+
+# Para poder ejecutar este docker-compose hay que seguir los siguientes pasos:
+# 1. Crear los dockerfiles respectivos para usar sus imagenes de cada uno de los servicios
+# 2. Ejecutar el comando: $docker-compose up
+# 3. Abrimos el navegador: http://localhost:9080/productpage
